@@ -34,7 +34,7 @@ def executeBtn():
 	return
 
 
-texteditor=tk.Text(root,height=30,width=80,bg="gray")
+texteditor=tk.Text(root,height=30,width=80,bg="white")
 texteditor.pack(side="left")
 sendLua = tk.Button(root,text="Execute",padx=40,pady=5,fg="black",bg="gray",command=executeBtn)
 sendLua.pack(side="right",anchor="s")
