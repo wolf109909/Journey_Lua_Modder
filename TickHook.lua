@@ -1,0 +1,2 @@
+RunOnceDetect()
+dofile("GameTick.lua")

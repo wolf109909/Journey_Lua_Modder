@@ -16,9 +16,9 @@ def is_open(filename): #copied from somewhere i don't remember but didn't use it
         return False # file is not opened by anyone else
     return True # file is already open
 def refreshTick(): #some shit code that actually works
-	Luatofile("gametick = 0","Gametick.lua")
+	Luatofile("gameTick = 1","GameTick.lua")
 	time.sleep(0.16)
-	Luatofile("--gametick = 0","Gametick.lua")
+	Luatofile("--gameTick = 1","GameTick.lua")
 	return
 def Luatofile(source,filename): #this doesn't work due to \n is invalid syntax, will look into it later
 	curfilename = open(filename,"w")
@@ -28,7 +28,7 @@ def Luatofile(source,filename): #this doesn't work due to \n is invalid syntax, 
 def executeBtn(): #function on button press
 	
 	curText=texteditor.get("1.0","end")
-	runOncelua=open("runonce.lua","w")
+	runOncelua=open("RunOnce.lua","w")
 	runOncelua.write(curText)
 	refreshTick()
 	return
