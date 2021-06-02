@@ -33,9 +33,9 @@ def is_open(filename):
         return False # file is not opened by anyone else
     return True # file is already open
 def refreshTick():
-	Luatofile("gameTick = 0","GameTick.lua")
+	Luatofile("gameTick = 1","GameTick.lua")
 	time.sleep(0.16)
-	Luatofile("--gameTick = 0","GameTick.lua")
+	Luatofile("--gameTick = 1","GameTick.lua")
 	return
 def Luatofile(source,filename):
 	curfilename = open(filename,"w")
