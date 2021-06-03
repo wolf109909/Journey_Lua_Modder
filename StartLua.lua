@@ -86,8 +86,9 @@ function SpawnEvent( eventTable )
 			print( "SpawnEvent(): invalid event type '"..eventType.."'\n" )
 			return
 		end
-	
-		print( "Spawning event '"..eventType.."'" )
+		
+		--useful for debug, but laggy/takes up space if spawning tons of events
+		--print( "Spawning event '"..eventType.."'" )
 		
 		local event = eventBarn:MetaAddEvent( eventType )
 		local eventImplPtr = _G[ eventType ].cast( event )

@@ -1,0 +1,56 @@
+A bunch of useful functions already found/made, in no particular order.
+
+DumpClassInfos(c)
+  A basic customized function included in StartLua.lua, which shows what is included in classes/other objects that Lua can access, printed to ClassInfo.txt in Journey root folder. Good for finding functions/variables/etc that aren't defined in the .lua's. 
+  (For "c", use _G to see everything at the top level, then use the name of almost anything marked as a table to see inside of it, and to see inside deeper use TopTable.TableInside.TableDeeperInside.Etc .)
+
+CONFIG = ...
+  Changes the global variable CONFIG which shows what sort of build the game is. "Valid" options appear to be Gold, PublicBeta, Demo, Production, and Debug. Using anything other than Gold/PublicBeta/Demo will turn on DebugPrint which outputs some debug info to stdout.txt . Using Production or Debug might allow some scripts to work that are otherwise unusable, hasn't been fully explored.
+
+ToggleDMActive(game)
+  Toggles "Rocket Death Match" mode on and off. Chirp to shoot rockets, press fly button/key rapidly to jump. Your companion can't see your rockets/explosions/craters/etc, but they do see you moving around strangely due to the third-person-shooter controls and jumping instead of flying.
+
+game:debugHud():CycleMode()
+  Displays a HUD showing information about connection, cameras, trigger timelines, and memory use(?); cycles through three different levels of detail.
+  
+game:cameraSystem():StartDebugCam()
+game:cameraSystem():StopDebugCam()
+  Start/stop the debug camera, which detaches from your character and can be rapidly moved all over the level. Press fly button/key to teleport your character in front of the camera. If debugHud is on, it will show the debug cam coordinates and other info.
+
+SpawnEvent{ triggertype = { var1 = a, var2 = b, etc } }
+  Makes an event happen as if a trigger from the level's TriggerInstances.lua had been triggered, you can do a very large amount of custom events this way. 
+  (Use the name of a trigger's Type as seen in TriggerInstances.lua for "triggertype", and fill in the variables the same way TriggerInstances shows for that type of trigger. You can also generate and view TempMetasystem.lua to see all trigger types including some that are unused in the regular game, see below)
+  (This function is defined in PWeb3.lua but will not work unless you define it yourself; the default StartLua.lua will do that for you) 
+  Examples: 
+    SpawnEvent { DisplayText = { text = "Text that shows up on your screen", x = 0, y = 0, duration = 3, fadeTime = 0.5, scale = 0.1 } }
+    SpawnEvent { PlayDudeAnim = { animName = "Name of an animation sequence defined in DudeAnimation.lua", clearAnimQueue = true, useLocal = true}}
+      (plays that animation for your character, and your companion will also be able to see it. Do useLocal=false to play animations on your companion if they are currently hijacked by "Nick")
+
+ActivateTriggerByName( triggerName )
+  Activates a trigger already included in TriggerInstances.lua for the current level, using that trigger's ObjectName.
+
+DumpMetaSys()
+  Creates TempMetasystem.lua in Journey root folder, which shows "A table of all non-abstract classes registered with the meta system". This file is useful to see all the possible triggers (will have metadata GardenerType = "Trigger") and the variables you can set for those triggers (it shows ObjectName, activityId, and lightbarId in all of them but these are not required to be set).
+  (The function that the game defines in Tick.lua will crash your game; the default StartLua.lua modifies it to work the same and not crash)
+
+Vars.table.setting(value)
+  Changes settings controlled by Vars.lua. You can also just change the values in Journey.exe itself, but this script is good for changing things while playing, and also some things will be changed by the game when it loads and you must use this script to actually make the game do what you want.
+  (See Vars.lua in Data/Scripts for possible settings: use a table/category name for "table", the specific setting name within that category for "option", and the desired value for "value".)
+
+Vars.Game.cheatsEnabled(true)
+  Needed for NetGui HUD to be turned on, and possibly other unknown things. Is reset to "false" when game loads so you must use lua script to set it to "true".
+  
+game:netGui():ToggleEnabled()
+  Turns on the NetGui HUD, which shows other players in the same "lobby" for the current level and lets you try to manually connect to them (might only be able to show up to 4, even if there are others you can connect to), or shows your current companion. You can move up/down in this menu with W/S, and select something by running game:netGui():ExecuteSelectedItem(game). It seems you still need to be nearby a player and have the same lobby flags triggered to connect to them, or at least to stay connected.
+  
+Vars.Lobby.kUseAutoLobby(true/false)
+  Turns on/off the AutoLobby system, which is what does matchmaking. Turning off is useful to avoid meeting a random player while trying to connect to someone specific using NetGui, or for playing solo without bothering with firewall/internet connection. If AutoLobby is off, your name can't show up in NetGui for someone else unless you select "Host Game" in NetGui.
+  
+Vars.SoundBarn.kEnableDebugHud(true/false)
+  Toggles a debug HUD with information about sounds being used.
+  
+Vars.DudeAnimation.kDebugConsoleEnabled(true)
+  Toggles a debug HUD with information about player animations being used.
+  
+game:playerBarn():GetLocalDude()/GetRemoteDude():GetAnimBarn():QueueAnimation( animName, blendIn, blendOut, animSpeed, numLoops, duration )
+  Can play any animation defined in animDatas table in DudeAnimation.lua , but it seems to only be visible in your own game. LocalDude is you, RemoteDude is your companion(might only work while they are hijacked by "Nick"). Documentation from DudeAnimation.lua: "blendIn, blendOut, and duration are in seconds. to use duration, set numLoops = 0, otherwise it will be ignored. you can set numLoops < 0 to fit a certain number of complete loops in a duration. you can set duration to be a negative number if you want it to keep playing until you stop it."
