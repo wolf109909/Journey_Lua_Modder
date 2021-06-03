@@ -1,7 +1,9 @@
 from ctypes import cdll
 import tkinter as tk
 from tkinter import simpledialog
+from tkinter import messagebox
 import time
+
 import os 
 root = tk.Tk()
 _sopen = cdll.msvcrt._sopen
@@ -55,7 +57,27 @@ def saveascodesnippet(): #the function gets called when save as code snippet but
     codename = simpledialog.askstring(title="Save as code snippet",prompt="filename:")
     createcodesnippet(codename,codecontent)
 texteditor=tk.Text(root,height=30,width=80,bg="white")
-texteditor.pack(side="left")
+texteditor.pack(side="left",fill="both", expand=True)
+flist = os.listdir()
+flistbox = tk.Listbox(root)
+flistbox.pack(fill="both", expand=True)
+ 
+# Listbox operations
+for item in flist:
+    flistbox.insert(tk.END, item)
+def showcontent(event):
+    x = flistbox.curselection()[0]
+    file = flistbox.get(x)
+    with open(file) as file:
+        try:
+            file = file.read()
+            
+        except ValueError:
+            messagebox.showerror("Oops!", "Something went wrong while accessing the file. Is the ")
+
+    texteditor.delete('1.0', tk.END)
+    texteditor.insert(tk.END, file)
+flistbox.bind("<<ListboxSelect>>", showcontent)
 sendLua = tk.Button(root,text="Execute",padx=40,pady=5,fg="black",bg="gray",command=executeBtn)
 savecodeassnippets = tk.Button(root,text="SaveAsSnippet",padx=40,pady=5,fg="black",bg="gray",command=saveascodesnippet)#added a button for saving as code snippet
 sendLua.pack(side="right",anchor="s")
