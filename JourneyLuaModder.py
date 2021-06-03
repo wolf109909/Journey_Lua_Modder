@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import simpledialog
 from tkinter import messagebox
 import time
-
+import json
 import os 
 root = tk.Tk()
 _sopen = cdll.msvcrt._sopen
@@ -58,10 +58,28 @@ def saveascodesnippet(): #the function gets called when save as code snippet but
     createcodesnippet(codename,codecontent)
 texteditor=tk.Text(root,height=30,width=80,bg="white")
 texteditor.pack(side="left",fill="both", expand=True)
-flist = os.listdir()
+
+flist = os.listdir() #change stuff inside this for accurate journey stuff, doesn't matter now if you put it under root folder of journey install.
 flistbox = tk.Listbox(root)
 flistbox.pack(fill="both", expand=True)
- 
+m = tk.Menu(root, tearoff = 0)
+m.add_command(label ="Cut")
+m.add_command(label ="Copy")
+m.add_command(label ="Paste")
+m.add_command(label ="Reload")
+m.add_separator()
+m.add_command(label ="Rename")
+  
+def do_popup(event):
+    try:
+        flistbox.selection_clear(0,tk.END)
+        flistbox.selection_set(flistbox.nearest(event.y))
+        flistbox.activate(flistbox.nearest(event.y))
+        m.tk_popup(event.x_root, event.y_root)
+    finally:
+        m.grab_release()
+  
+flistbox.bind("<Button-3>", do_popup)
 # Listbox operations
 for item in flist:
     flistbox.insert(tk.END, item)
@@ -73,11 +91,15 @@ def showcontent(event):
             file = file.read()
             
         except ValueError:
-            messagebox.showerror("Oops!", "Something went wrong while accessing the file. Is the ")
+            messagebox.showerror("Oops!", "Something went wrong while accessing the file. Make sure you have selected a proper text file.")
 
     texteditor.delete('1.0', tk.END)
     texteditor.insert(tk.END, file)
 flistbox.bind("<<ListboxSelect>>", showcontent)
+flistscrollbar = tk.Scrollbar(flistbox)
+flistscrollbar.pack(side = "right", fill = "both")
+flistbox.config(yscrollcommand = flistscrollbar.set)
+flistscrollbar.config(command = flistbox.yview)
 sendLua = tk.Button(root,text="Execute",padx=40,pady=5,fg="black",bg="gray",command=executeBtn)
 savecodeassnippets = tk.Button(root,text="SaveAsSnippet",padx=40,pady=5,fg="black",bg="gray",command=saveascodesnippet)#added a button for saving as code snippet
 sendLua.pack(side="right",anchor="s")
