@@ -47,9 +47,6 @@ end
 function DumpClassInfos( c )
     local classInfos = {}
     for name,var in pairs( c ) do
-function DumpClassInfos( c )
-    local classInfos = {}
-    for name,var in pairs( c ) do
             table.insert( classInfos, { name = name, data = tostring(var) } )
     end
     table.sort( classInfos, function( t0, t1 ) return t0.name < t1.name end )
