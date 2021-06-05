@@ -5,7 +5,7 @@ DumpClassInfos(c)
   (For "c", use _G to see everything at the top level, then use the name of almost anything marked as a table to see inside of it, and to see inside deeper use TopTable.TableInside.TableDeeperInside.Etc .)
 
 CONFIG = ...
-  Changes the global variable CONFIG which shows what sort of build the game is. "Valid" options appear to be Gold, PublicBeta, Demo, Production, and Debug. Using anything other than Gold/PublicBeta/Demo will turn on DebugPrint which outputs some debug info to stdout.txt . Using Production or Debug might allow some scripts to work that are otherwise unusable, hasn't been fully explored.
+  Changes the global variable CONFIG which shows what sort of build the game is. "Valid" options appear to be Gold, PublicBeta, Demo, Production, and Debug. Using anything other than Gold/PublicBeta/Demo will turn on DebugPrint which outputs some debug info to stdout (use modified print() from Code Snippets to make it actually print to the readable file stdout.txt) . Using Production or Debug might allow some scripts to work that are otherwise unusable, hasn't been fully explored.
 
 ToggleDMActive(game)
   Toggles "Rocket Death Match" mode on and off. Chirp to shoot rockets, press fly button/key rapidly to jump. Your companion can't see your rockets/explosions/craters/etc, but they do see you moving around strangely due to the third-person-shooter controls and jumping instead of flying.
