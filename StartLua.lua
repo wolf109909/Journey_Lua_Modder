@@ -28,7 +28,7 @@ file:write(tostring(content).."\n")
 file:close()
 end
 
-function print( s, name )
+function PrintToFile( s, name )
     name = name or "stdout.txt"
     file = io.open(name, "a")
     io.output(file)
@@ -40,10 +40,13 @@ end
 
 function FunctionInfo(f)
 	for key,value in pairs(debug.getinfo(f)) do
-		print("found member " .. key.."   value:"..tostring(value), "FunctionInfo.txt")
+		PrintToFile("found member " .. key.."   value:"..tostring(value), "FunctionInfo.txt")
 	end
 end
 
+function DumpClassInfos( c )
+    local classInfos = {}
+    for name,var in pairs( c ) do
 function DumpClassInfos( c )
     local classInfos = {}
     for name,var in pairs( c ) do
@@ -52,7 +55,7 @@ function DumpClassInfos( c )
     table.sort( classInfos, function( t0, t1 ) return t0.name < t1.name end )
 
     for i,classInfo in ipairs( classInfos ) do
-        print( "KEY: "..classInfo.name.." ): "..classInfo.data, "ClassInfo.txt" )
+        PrintToFile( "KEY: "..classInfo.name.." ): "..classInfo.data, "ClassInfo.txt" )
     end
 end
 
@@ -61,10 +64,10 @@ end
 function DebugPrintError( ... )
     local sep = ""
     for i,arg in ipairs( { ... } ) do
-        print( sep..tostring( arg ), "stderr.txt" )
+        PrintToFile( sep..tostring( arg ), "stderr.txt" )
         sep = "\t"
     end
-    print( "\n", "stderr.txt" )
+    PrintToFile( "\n", "stderr.txt" )
 end
 
 function DumpMetaSys()
@@ -87,7 +90,7 @@ function SpawnEvent( eventTable )
 			return
 		end
 		
-		--useful for debug, but laggy/takes up space if spawning tons of events
+		--useful for debug, but maybe laggy/take up space if spawning tons of events and have print() going to file
 		--print( "Spawning event '"..eventType.."'" )
 		
 		local event = eventBarn:MetaAddEvent( eventType )
