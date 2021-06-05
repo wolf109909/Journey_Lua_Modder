@@ -1,4 +1,20 @@
--- BASIC MENU SYSTEM --
+---- MODDING PRINT() TO SEE DEBUG MESSAGES ----
+-- Use this to make the game's debug messages print to a text file in the Journey folder. Usually it just outputs to stdout/the console, but we don't know if/how we can read the console yet. Using a program like mTail, you can view the text file updates in real time like an actual console.
+
+function print( s )
+    file = io.open("stdout.txt", "a")
+    io.output(file)
+    io.write(s.."\n")
+    file:close()
+end
+
+--Also, use either of these to see even more debug info; seems to mostly be resource loading details when levels begin. Both cause the game to print the same extra info, but might have different effects on other things in the game.
+CONFIG = "Debug"
+--or
+CONFIG = "Production"
+
+
+---- BASIC MENU SYSTEM ----
 --Only works when the normal menu is closed, since this kind of input isn't detected when that's open
 --This could all certainly be changed/improved, this is just a basic example to build from
 
