@@ -14,19 +14,20 @@ _sopen = cdll.msvcrt._sopen
 _close = cdll.msvcrt._close
 _SH_DENYRW = 0x10
 def interpretRunOnceLua(Name):
+    print("Triggered!")
     interpretCodeFile=open(Name,"r")
     interpretCode=interpretCodeFile.read()
-    runOncelua=open("RunOnce.lua","w+")
-    oldCode=runOncelua.read()
+    runOncelua=open("RunOnce.lua","w")
     runOncelua.write(interpretCode)
     refreshTick()
-    runOncelua.write(oldCode)
 def registerHotkey(Name):
     ObjData = WorkspaceObj.ReadFromDisk(Name)
     CreationMode = ObjData[0]
     Delay = ObjData[1]
     Hotkey = ObjData[2]
-    keyboard.add_hotkey(Hotkey, interpretRunOnceLua(Name))
+    print(Name)
+    print(Hotkey)
+    keyboard.add_hotkey(Hotkey,interpretRunOnceLua,args={Name})
     
 def createObj(Name,Mode,Delay,Hotkey):
     WorkspaceObj(Name,Mode,Delay,Hotkey)
@@ -53,7 +54,9 @@ def editObjMsg(Name):
     CreationEntry = tk.Entry(top,width=20)
     CreationEntry.grid()
     CreationEntry.insert(0,Hotkey)
-   
+    def HotkeyBtn():
+        Hotkey = keyboard.read_hotkey()
+        CreationEntry.insert(0,Hotkey)
     def SaveBtn():
         Hotkey = CreationEntry.get()
         Delay = DelayEntry.get()
@@ -61,9 +64,15 @@ def editObjMsg(Name):
         registerHotkey(Name)
         top.destroy()
         refreshfList()
-       
+    def ClearHotkey():
+        CreationEntry.delete(0,"end")
+        Hotkey = CreationEntry.get()
     CreationBtn = Button(top, text="Save", command=SaveBtn)
     CreationBtn.grid()
+    HotkeyBtn = Button(top, text="HotkeySet", command=HotkeyBtn)
+    HotkeyBtn.grid()
+    ClrBtn = Button(top, text="ClearHotkey", command=ClearHotkey)
+    ClrBtn.grid()
     top.mainloop()
 def createObjMsg(Name):
     CreationMode = False
@@ -82,7 +91,9 @@ def createObjMsg(Name):
     labe2.grid()
     CreationEntry = tk.Entry(top,width=20)
     CreationEntry.grid()
-   
+    def HotkeyBtn():
+        Hotkey = keyboard.read_hotkey()
+        CreationEntry.insert(0,Hotkey)
     def SaveBtn():
         Hotkey = CreationEntry.get()
         Delay = DelayEntry.get()
@@ -90,9 +101,15 @@ def createObjMsg(Name):
         registerHotkey(Name)
         top.destroy()
         refreshfList()
-       
+    def ClearHotkey():
+        CreationEntry.delete(0,"end")
+        Hotkey = CreationEntry.get()
     CreationBtn = Button(top, text="Save", command=SaveBtn)
     CreationBtn.grid()
+    HotkeyBtn = Button(top, text="HotkeySet", command=HotkeyBtn)
+    HotkeyBtn.grid()
+    ClrBtn = Button(top, text="ClearHotkey", command=ClearHotkey)
+    ClrBtn.grid()
     top.mainloop()
     
 def getrowcount():
