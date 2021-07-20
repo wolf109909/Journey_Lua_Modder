@@ -2,16 +2,99 @@ from ctypes import cdll
 import tkinter as tk
 from tkinter import simpledialog
 from tkinter import messagebox
+from tkinter import *
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import time
 import json
 import os 
-
+import keyboard
+import shelve
 root = tk.Tk()
 _sopen = cdll.msvcrt._sopen
 _close = cdll.msvcrt._close
 _SH_DENYRW = 0x10
-
+def interpretRunOnceLua(Name):
+    interpretCodeFile=open(Name,"r")
+    interpretCode=interpretCodeFile.read()
+    runOncelua=open("RunOnce.lua","w+")
+    oldCode=runOncelua.read()
+    runOncelua.write(interpretCode)
+    refreshTick()
+    runOncelua.write(oldCode)
+def registerHotkey(Name):
+    ObjData = WorkspaceObj.ReadFromDisk(Name)
+    CreationMode = ObjData[0]
+    Delay = ObjData[1]
+    Hotkey = ObjData[2]
+    keyboard.add_hotkey(Hotkey, interpretRunOnceLua(Name))
+    
+def createObj(Name,Mode,Delay,Hotkey):
+    WorkspaceObj(Name,Mode,Delay,Hotkey)
+    WorkspaceObj.WriteToDisk(Name,Mode,Delay,Hotkey)
+def editObjMsg(Name):
+    ObjData = WorkspaceObj.ReadFromDisk(Name)
+    CreationMode = ObjData[0]
+    Delay = ObjData[1]
+    Hotkey = ObjData[2]
+    top = tk.Toplevel()
+    label = tk.Label(top,text="Mode",width=20)
+    label.grid()
+    radio1 = Radiobutton(top,text="Loop",variable = CreationMode,value=True,anchor="n")
+    radio1.grid()
+    radio2 = Radiobutton(top,text="Once",variable = CreationMode,value=False,anchor="n")
+    radio2.grid()
+    label3 = tk.Label(top,text="Delay(ms)",width=20)
+    label3.grid()
+    DelayEntry = tk.Entry(top,width=20)
+    DelayEntry.grid()
+    DelayEntry.insert(0,Delay)
+    labe2 = tk.Label(top,text="Hotkey",width=20)
+    labe2.grid()
+    CreationEntry = tk.Entry(top,width=20)
+    CreationEntry.grid()
+    CreationEntry.insert(0,Hotkey)
+   
+    def SaveBtn():
+        Hotkey = CreationEntry.get()
+        Delay = DelayEntry.get()
+        createObj(Name,CreationMode,Delay,Hotkey)
+        registerHotkey(Name)
+        top.destroy()
+        refreshfList()
+       
+    CreationBtn = Button(top, text="Save", command=SaveBtn)
+    CreationBtn.grid()
+    top.mainloop()
+def createObjMsg(Name):
+    CreationMode = False
+    top = tk.Toplevel()
+    label = tk.Label(top,text="Mode",width=20)
+    label.grid()
+    radio1 = Radiobutton(top,text="Loop",variable = CreationMode,value=True,anchor="n")
+    radio1.grid()
+    radio2 = Radiobutton(top,text="Once",variable = CreationMode,value=False,anchor="n")
+    radio2.grid()
+    label3 = tk.Label(top,text="Delay(ms)",width=20)
+    label3.grid()
+    DelayEntry = tk.Entry(top,width=20)
+    DelayEntry.grid()
+    labe2 = tk.Label(top,text="Hotkey",width=20)
+    labe2.grid()
+    CreationEntry = tk.Entry(top,width=20)
+    CreationEntry.grid()
+   
+    def SaveBtn():
+        Hotkey = CreationEntry.get()
+        Delay = DelayEntry.get()
+        createObj(Name,CreationMode,Delay,Hotkey)
+        registerHotkey(Name)
+        top.destroy()
+        refreshfList()
+       
+    CreationBtn = Button(top, text="Save", command=SaveBtn)
+    CreationBtn.grid()
+    top.mainloop()
+    
 def getrowcount():
     count = len(open("test.txt").readlines())
     return count
@@ -25,15 +108,37 @@ def fetchcode(filename):
     curfile = open(filename)
     return(curfile.read())
 def createcodesnippet(name,code):
-    codesnippet(name)
-    jsonstr = json.dumps(name)
-    jsontofile(name,jsonstr)
     codetofile(name,code)
-class codesnippet: #added a class that handles code snippet creation
-    def __init__(self,name):
-        self.name = name
-        
+    createObjMsg(name)
+    
 
+
+
+
+
+
+class WorkspaceObj: #added a class that handles code snippet creation
+    
+    def __init__(self,Name,Mode,Delay,Hotkey):
+        self.Name = Name
+        self.Mode = Mode
+        self.Delay = Delay
+        self.Hotkey = Hotkey
+    def WriteToDisk(Name,Mode,Delay,Hotkey):
+        
+        db=shelve.open("Moddata/"+Name)
+        db["Name"]=Name
+        db["Mode"]=Mode
+        db["Delay"]=Delay
+        db["Hotkey"]=Hotkey
+        db.close()
+    def ReadFromDisk(Name):
+        db=shelve.open("Moddata/"+Name)
+        Mode = db["Mode"]
+        Delay = db["Delay"]
+        Hotkey = db["Hotkey"]
+        WorkspaceObj(Name,Mode,Delay,Hotkey)
+        return Mode,Delay,Hotkey
 def is_open(filename):
     if not os.access(filename, os.F_OK):
         return False # file doesn't exist
@@ -58,7 +163,7 @@ def executeBtn():
 	runOncelua=open("RunOnce.lua","w")
 	runOncelua.write(curText)
 	refreshTick()
-	return
+	
 def renameFile():
     curfilename = flistbox.get(flistbox.curselection())
     destfilename = simpledialog.askstring(title="Rename file",prompt="New filename:")
@@ -76,11 +181,13 @@ def saveFile():
         text = txt_edit.get(1.0, tk.END)
         output_file.write(text)
         refreshfList()
-
+def propertiesFile():
+    Name = flistbox.get(flistbox.curselection())
+    editObjMsg(Name)
 def saveascodesnippet(): #the function gets called when save as code snippet button is pressed
     codecontent = texteditor.get("1.0","end")
     codename = simpledialog.askstring(title="Save as code snippet",prompt="Filename:")
-    createcodesnippet(codename,codecontent)
+    createcodesnippet(codename+".lua",codecontent)
     refreshfList()
 def do_popup(event):
     try:
@@ -113,11 +220,12 @@ def refreshfList():
     flistbox.delete(0,tk.END)
     flist = os.listdir()
     for item in flist:
+        
         flistbox.insert(tk.END, item)
 m = tk.Menu(root, tearoff = 0)
 m.add_command(label ="Save As...",command= saveFile)
 m.add_command(label ="Rename",command = renameFile)
-m.add_command(label ="meh")
+m.add_command(label ="Proterties",command = propertiesFile)
 m.add_command(label ="meh")
 m.add_separator()
 m.add_command(label ="Reload",command = refreshfList)
@@ -133,7 +241,7 @@ flistscrollbar.pack(side = "right", fill = "both")
 flistbox.config(yscrollcommand = flistscrollbar.set)
 flistscrollbar.config(command = flistbox.yview)
 sendLua = tk.Button(root,text="Execute",padx=40,pady=5,fg="black",bg="gray",command=executeBtn)
-savecodeassnippets = tk.Button(root,text="SaveAsSnippet",padx=40,pady=5,fg="black",bg="gray",command=saveascodesnippet)#added a button for saving as code snippet
+savecodeassnippets = tk.Button(root,text="NewObj",padx=40,pady=5,fg="black",bg="gray",command=saveascodesnippet)#added a button for saving as code snippet
 sendLua.pack(side="right",anchor="s")
 savecodeassnippets.pack(side="right",anchor="s")
 root.mainloop()
