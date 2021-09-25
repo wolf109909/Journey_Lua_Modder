@@ -17,7 +17,7 @@ __Optional recommendations:__
 - Patch your modding exe via steamless to disable Steam launching redirection, still requires Steam running. 
 - Use a emulator when modding to avoid impacting others gameplay.
 
-Requires Python 3, run pythonw JourneyLuaModder.py 
+Requires Python 3.6+, run pythonw JourneyLuaModder.py 
 
 This tool is a work in progress. many functionalities will add on from time to time.
 
