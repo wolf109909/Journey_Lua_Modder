@@ -7,7 +7,7 @@ Also works in the game "Flower" with minor changes. (do not copy Tick.lua from h
 
 Download JourneyLuaModder.py, TickHook.lua, and StartLua.lua to Journey root folder.
 
-Modify \_\_Tick.lua.gz with our changes and embed it into Journey.exe according to this tutorial made by Alazar88:
+Modify \_\_Tick.lua.gz with our changes and _carefully_ embed it into Journey.exe according to this tutorial made by Alazar88:
 
 https://thatgamecompanyfan.boards.net/thread/541/pc-lua-script-editing-injection
 
