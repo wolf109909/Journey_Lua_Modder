@@ -39,13 +39,6 @@ function PrintToFile( s, name )
     file:close()
 end
 
-function print( s )
-    file = io.open("stdout.txt", "a")
-    io.output(file)
-    io.write(os.date( "%a %b %d, %H:%M").." - "..s.."\n")
-    file:close()
-end
-
 -- Optional functions --
 
 function FunctionInfo(f)
