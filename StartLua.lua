@@ -15,11 +15,14 @@ dofile("RunOnce.lua")
 end
 
 function MyErrorHandler( err )
-   Prompt( err )
+    file2 = io.open("stderr.txt","a")
+    file2:write(os.date( "%a %b %d, %H:%M").." - "..err.."\n")
+    file2:close()
+    Prompt( err )
 end
 
 function Prompt(text)
-os.execute("@echo on&echo "..text.."&pause")
+os.execute("@echo "..text.."&timeout 6")
 end
 
 function MakeFile(content)
@@ -32,7 +35,7 @@ function PrintToFile( s, name )
     name = name or "stdout.txt"
     file = io.open(name, "a")
     io.output(file)
-    io.write(s.."\n")
+    io.write(os.date( "%a %b %d, %H:%M").." - "..s.."\n")
     file:close()
 end
 
@@ -65,6 +68,10 @@ function DebugPrintError( ... )
         sep = "\t"
     end
     PrintToFile( "\n", "stderr.txt" )
+end
+
+function DebugPrint( ... )
+		return print( ... )
 end
 
 function DumpMetaSys()
