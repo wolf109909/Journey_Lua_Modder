@@ -15,6 +15,6 @@ https://thatgamecompanyfan.boards.net/thread/541/pc-lua-script-editing-injection
 
 run JourneyLuaModder.py
 
-This tool is a work in progress. many functionalities will add on from time to time.
+This tool has been stopped updating since I've found a better way of doing Lua injection.
 
-Feel free to contribute to this project if you wants!
+Feel free to contribute to this project if you want!
