@@ -1,3 +1,5 @@
+# This Project is a stub. please check this Project instead:
+https://github.com/wolf109909/Journey_Detour
 # Journey_Lua_Modder
 A python GUI application aiming to make Lua injection to the game "Journey" easier.
 
